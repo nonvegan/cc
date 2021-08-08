@@ -1,4 +1,4 @@
-# Mid-Point Circle Drawing
+# Mid-Point Circle
 
 Inspired by [tsoding/midpoint-circle-visualization](https://github.com/tsoding/midpoint-circle-visualization)
 
@@ -9,6 +9,6 @@ Inspired by [tsoding/midpoint-circle-visualization](https://github.com/tsoding/m
 ```console
 $ make
 $ ./main
-$```
+```
 
 
