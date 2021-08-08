@@ -1,2 +1,2 @@
-main: main.c
-	gcc -o main main.c
+main: src/main.c src/canvas.c
+	gcc -Wall -Wextra -pedantic -o main src/main.c src/canvas.c

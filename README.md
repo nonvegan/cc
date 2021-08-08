@@ -10,5 +10,8 @@ Inspired by [tsoding/midpoint-circle-visualization](https://github.com/tsoding/m
 $ make
 $ ./main
 ```
+## Output
+
+![Circle](img/circle.png) ![Filled circle](img/filled_circle.png)
 
 
