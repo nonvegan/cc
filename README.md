@@ -10,7 +10,7 @@ Inspired by [tsoding/midpoint-circle-visualization](https://github.com/tsoding/m
 $ make
 $ ./main
 ```
-## Output
+## Output (Converted to PNG)
 
 ![Circle](img/circle.png) ![Filled circle](img/filled_circle.png)
 
