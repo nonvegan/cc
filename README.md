@@ -1,4 +1,4 @@
-# Midpoint Circle Algorith
+# Midpoint Circle Algorithm
 
 Inspired by [tsoding/midpoint-circle-visualization](https://github.com/tsoding/midpoint-circle-visualization)
 
