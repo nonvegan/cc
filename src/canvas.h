@@ -16,11 +16,11 @@ void canvas_free(Canvas *canvas);
 
 void canvas_fill_px(Canvas *canvas, size_t x, size_t y, uint32_t c);
 
-void canvas_clear_color(Canvas *canvas, uint32_t c);
+void canvas_clear(Canvas *canvas, uint32_t c);
 
 void canvas_draw_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg);
 
-void canvas_draw_circle(Canvas *canvas, size_t cx, size_t cy, size_t r, uint32_t fg);
+void canvas_draw_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg);
 
 void canvas_save_to_ppm(Canvas *canvas, char* file_name);
 

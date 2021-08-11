@@ -31,7 +31,7 @@ void canvas_fill_px(Canvas *canvas, size_t x, size_t y, uint32_t c)
     canvas->ctx[px_offset + 2] = (c >> (8 * 0)) & 0xFF;
 }
 
-void canvas_clear_color(Canvas *canvas, uint32_t c)
+void canvas_clear(Canvas *canvas, uint32_t c)
 {
     for(size_t x = 0; x < canvas->width; x++)
         for(size_t y = 0; y < canvas->height; y++)
@@ -51,10 +51,10 @@ void canvas_draw_filled_circle(Canvas *canvas, float cx, float cy, float r, uint
     }
 }
 
-void canvas_draw_circle(Canvas *canvas, size_t cx, size_t cy, size_t r, uint32_t fg)
+void canvas_draw_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg)
 {
-    size_t x = 0;
-    size_t y = r;
+    float x = 0.5f;
+    float y = r - 0.5f;
 
     while(x <= y) {
         canvas_fill_px(canvas, cx + x, cy + y, fg);
