@@ -4,6 +4,10 @@
 #include <string.h>
 #include <assert.h>
 
+#define RGB(R, G, B) R << 8 * 2 | \
+                     G << 8 * 1 | \
+                     B << 8 * 0
+
 #define R_RGB(X) (X >> 8 * 2 & 0xFF)
 #define G_RGB(X) (X >> 8 * 1 & 0xFF)
 #define B_RGB(X) (X >> 8 * 0 & 0xFF)
@@ -85,9 +89,9 @@ float lerp(float x, float y, float p)
 
 uint32_t color_blend(uint32_t bg, uint32_t fg, float ratio)
 {
-    return (uint8_t) lerp(R_RGB(bg), R_RGB(fg), ratio) << 8 * 2 |
-           (uint8_t) lerp(G_RGB(bg), G_RGB(fg), ratio) << 8 * 1 |
-           (uint8_t) lerp(B_RGB(bg), B_RGB(fg), ratio) << 8 * 0;
+    return RGB((uint8_t) lerp(R_RGB(bg), R_RGB(fg), ratio),
+               (uint8_t) lerp(G_RGB(bg), G_RGB(fg), ratio), 
+               (uint8_t) lerp(B_RGB(bg), B_RGB(fg), ratio));
 }
 
 void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg, uint32_t bg)
