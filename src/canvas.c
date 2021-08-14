@@ -8,9 +8,9 @@
                      G << 8 * 1 | \
                      B << 8 * 0
 
-#define R_RGB(X) (X >> 8 * 2 & 0xFF)
-#define G_RGB(X) (X >> 8 * 1 & 0xFF)
-#define B_RGB(X) (X >> 8 * 0 & 0xFF)
+#define R_RGB(X) X >> 8 * 2 & 0xFF
+#define G_RGB(X) X >> 8 * 1 & 0xFF
+#define B_RGB(X) X >> 8 * 0 & 0xFF
 
 #define AA_X 2
 #define AA_STEP 1.0 / (1 + AA_X)
