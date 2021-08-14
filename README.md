@@ -12,6 +12,4 @@ $ ./main
 ```
 ## Output (Converted to PNG)
 
-![Circle](img/circle.png) ![Filled circle](img/filled_circle.png)
-
-
+![Circle](img/circle.png) ![Filled circle](img/filled_circle.png) ![AA Filled circle](img/anti_aliased_filled_circle.png)
