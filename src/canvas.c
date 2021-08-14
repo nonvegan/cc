@@ -6,11 +6,11 @@
 
 Canvas *canvas_create(size_t w, size_t h)
 {
-    Canvas *canvas = malloc(sizeof(canvas));
+    Canvas *canvas = malloc(sizeof(Canvas));
 
     canvas->width = w;
     canvas->height = h;
-    canvas->ctx = calloc(w * h * 3, 1);
+    canvas->ctx = calloc(w * h * 3, 1); 
 
     return canvas;
 }
