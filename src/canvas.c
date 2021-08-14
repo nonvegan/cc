@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 #define RGB(R, G, B) R << 8 * 2 | \
                      G << 8 * 1 | \
@@ -21,7 +22,7 @@ Canvas *canvas_create(size_t w, size_t h)
 
     canvas->width = w;
     canvas->height = h;
-    canvas->ctx = calloc(w * h * 3, 1); 
+    canvas->ctx = calloc(w * h * 3, 1);
 
     return canvas;
 }
@@ -89,9 +90,9 @@ float lerp(float x, float y, float p)
 
 uint32_t color_blend(uint32_t bg, uint32_t fg, float ratio)
 {
-    return RGB((uint8_t) lerp(R_RGB(bg), R_RGB(fg), ratio),
-               (uint8_t) lerp(G_RGB(bg), G_RGB(fg), ratio), 
-               (uint8_t) lerp(B_RGB(bg), B_RGB(fg), ratio));
+    return RGB((uint8_t) sqrt(lerp(pow(R_RGB(bg), 2), pow(R_RGB(fg), 2), ratio)),
+               (uint8_t) sqrt(lerp(pow(G_RGB(bg), 2), pow(G_RGB(fg), 2), ratio)),
+               (uint8_t) sqrt(lerp(pow(B_RGB(bg), 2), pow(B_RGB(fg), 2), ratio)));
 }
 
 void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg, uint32_t bg)
