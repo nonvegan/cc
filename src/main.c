@@ -6,7 +6,7 @@
 
 #define BG_COLOR 0x282C34
 #define FG_COLOR 0xF92672
-#define AA_X 2
+#define AA_X 4
 
 int main(void)
 {
