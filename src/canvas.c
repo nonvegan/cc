@@ -5,9 +5,6 @@
 #include <assert.h>
 #include <math.h>
 
-#define AA_X 4
-#define AA_STEP 1.0 / (1 + AA_X)
-
 Canvas *canvas_create(size_t w, size_t h)
 {
     Canvas *canvas = malloc(sizeof(Canvas));
@@ -87,22 +84,23 @@ uint32_t color_blend(uint32_t bg, uint32_t fg, float ratio)
                (uint8_t) sqrt(lerp(pow(B_RGB(bg), 2), pow(B_RGB(fg), 2), ratio)));
 }
 
-void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg, uint32_t bg)
+void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg, uint32_t bg, size_t aa_x)
 {
     for(size_t x = 0; x < canvas->width; x++)
         for(size_t y = 0; y < canvas->height; y++) {
-
             size_t aa_count = 0;
-            for(size_t i = 1; i <= AA_X; i++)
-                for (size_t j = 1; j <= AA_X; j++) {
-                    float dx =  cx - (x + i * AA_STEP);
-                    float dy =  cy - (y + j * AA_STEP);
+            size_t aa_step = 1.0f / (1 + aa_x);
+
+            for(size_t i = 1; i <= aa_x; i++)
+                for (size_t j = 1; j <= aa_x; j++) {
+                    float dx =  cx - (x + i * aa_step);
+                    float dy =  cy - (y + j * aa_step);
 
                     if(dx*dx + dy*dy <= r * r)
                         aa_count++;
                 }
 
-            canvas_fill_px(canvas, x, y, color_blend(bg, fg, (float) aa_count / (AA_X * AA_X)));
+            canvas_fill_px(canvas, x, y, color_blend(bg, fg, (float) aa_count / (aa_x * aa_x)));
         }
 }
 

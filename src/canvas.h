@@ -30,7 +30,7 @@ void canvas_draw_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg
 
 void canvas_draw_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg);
 
-void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg, uint32_t bg);
+void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg, uint32_t bg, size_t aa_x);
 
 void canvas_save_to_ppm(Canvas *canvas, char* file_name);
 
