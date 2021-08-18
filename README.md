@@ -17,6 +17,6 @@ $ mpv circle.y4m
 ```
 ## Output (Converted to PNG & GIF)
 
-Circle | Filled circle | AA filled circle | AA filled circles video
+Circle | Filled circle | AA filled circle | AA filled circles
 :-:|:-:|:-:|:-:
 ![Circle](img/circle.png) | ![Filled circle](img/filled_circle.png) | ![AA filled circle](img/anti_aliased_filled_circle.png) | ![circle](img/circle.gif)
