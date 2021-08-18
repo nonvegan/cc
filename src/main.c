@@ -35,7 +35,7 @@ int main(void)
     for(size_t i = 0; i < frame_count; i++) {
         canvas_clear(canvas, BG_COLOR);
         canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f,
-                                               fabs(cos(i/25.0f)) * RADIUS_PX, FG_COLOR, BG_COLOR);
+                                               fabs(cos(i/24.0f)) * RADIUS_PX, FG_COLOR, BG_COLOR);
         y4m2_dump_canvas_frame(y4m2, canvas, 1);
         printf("Generating %s: %.0f%%\r", y4m2->file_name, i * 100.0f / frame_count);
         fflush(stdout);
