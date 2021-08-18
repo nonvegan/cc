@@ -5,14 +5,6 @@
 #include <assert.h>
 #include <math.h>
 
-#define RGB(R, G, B) R << 8 * 2 | \
-                     G << 8 * 1 | \
-                     B << 8 * 0
-
-#define R_RGB(X) X >> 8 * 2 & 0xFF
-#define G_RGB(X) X >> 8 * 1 & 0xFF
-#define B_RGB(X) X >> 8 * 0 & 0xFF
-
 #define AA_X 4
 #define AA_STEP 1.0 / (1 + AA_X)
 
@@ -127,4 +119,5 @@ void canvas_save_to_ppm(Canvas *canvas, char* file_name)
     fwrite(canvas->ctx, canvas->width * canvas->height * 3, 1, f);
 
     fclose(f);
+    printf("Generated %s\n", file_name);
 }

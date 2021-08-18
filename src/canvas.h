@@ -4,6 +4,14 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#define RGB(R, G, B) (R << 8 * 2 | \
+                      G << 8 * 1 | \
+                      B << 8 * 0)
+
+#define R_RGB(X) (X >> 8 * 2 & 0xFF)
+#define G_RGB(X) (X >> 8 * 1 & 0xFF)
+#define B_RGB(X) (X >> 8 * 0 & 0xFF)
+
 typedef struct {
     size_t width;
     size_t height;
@@ -23,7 +31,6 @@ void canvas_draw_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg
 void canvas_draw_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg);
 
 void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg, uint32_t bg);
-
 
 void canvas_save_to_ppm(Canvas *canvas, char* file_name);
 
