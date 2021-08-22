@@ -25,8 +25,8 @@ Y4m2 *y4m2_open_video(char *file_name, size_t width, size_t height, size_t fps)
 
     fprintf(f, "YUV4MPEG2 W%lu H%lu F%lu:1 Ip A1:1 C444\n", width, height, fps);
 
-    y4m2->file_name = file_name;
     y4m2->file = f;
+    y4m2->file_name = strdup(file_name);
     y4m2->width = width;
     y4m2->height = height;
     y4m2->fps = fps;
@@ -70,5 +70,6 @@ void y4m2_dump_canvas_frame(Y4m2 *y4m2, Canvas *canvas, size_t frame_count)
 void y4m2_close_video(Y4m2 *y4m2)
 {
     fclose(y4m2->file);
+    free(y4m2->file_name);
     free(y4m2);
 }
