@@ -110,6 +110,7 @@ void canvas_save_to_ppm(Canvas *canvas, char* file_name)
     FILE *f = fopen(file_name, "w");
     if (f == NULL) {
         fprintf(stdout, "ERROR: could not open file %s: %s\n", file_name, strerror(errno));
+        canvas_free(canvas);
         exit(1);
     }
 
