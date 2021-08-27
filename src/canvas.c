@@ -89,7 +89,7 @@ void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, 
     for(size_t x = 0; x < canvas->width; x++)
         for(size_t y = 0; y < canvas->height; y++) {
             size_t aa_count = 0;
-            size_t aa_step = 1.0f / (1 + aa_x);
+            float aa_step = 1.0f / (1 + (float) aa_x);
 
             for(size_t i = 1; i <= aa_x; i++)
                 for (size_t j = 1; j <= aa_x; j++) {
