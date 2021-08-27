@@ -12,8 +12,9 @@ Inspired by [tsoding/midpoint-circle-visualization](https://github.com/tsoding/m
 ```console
 $ make
 $ ./main
-$ feh *.ppm
+$ feh *.ppm --keep-zoom-vp --force-aliasing
 $ mpv circle.y4m
+$ ./main opengl
 ```
 ## Output (Converted to PNG & GIF)
 

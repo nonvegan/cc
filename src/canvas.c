@@ -1,9 +1,10 @@
-#include "./canvas.h"
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
 #include <math.h>
+
+#include "canvas.h"
 
 Canvas *canvas_create(size_t w, size_t h)
 {
@@ -89,7 +90,7 @@ void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, 
     for(size_t x = 0; x < canvas->width; x++)
         for(size_t y = 0; y < canvas->height; y++) {
             size_t aa_count = 0;
-            size_t aa_step = 1.0f / (1 + aa_x);
+            float aa_step = 1.0f / (1 + (float) aa_x);
 
             for(size_t i = 1; i <= aa_x; i++)
                 for (size_t j = 1; j <= aa_x; j++) {
@@ -117,5 +118,5 @@ void canvas_save_to_ppm(Canvas *canvas, char* file_name)
     fwrite(canvas->ctx, canvas->width * canvas->height * 3, 1, f);
 
     fclose(f);
-    printf("Generated %s\n", file_name);
+    printf("INFO: Generated %s\n", file_name);
 }

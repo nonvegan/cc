@@ -1,9 +1,9 @@
 #ifndef YUV_H_
 #define YUV_H_
 
-#include "./canvas.h"
 #include <stdlib.h>
-#include <stdio.h>
+
+#include "canvas.h"
 
 typedef struct {
     char *file_name;

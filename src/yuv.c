@@ -1,11 +1,10 @@
-#include "./yuv.h"
-#include "./canvas.h"
-
-#include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+
+#include "yuv.h"
+#include "canvas.h"
 
 #define YCBCR(Y,CB,CR) RGB(Y,CB,CR)
 
@@ -70,6 +69,7 @@ void y4m2_dump_canvas_frame(Y4m2 *y4m2, Canvas *canvas, size_t frame_count)
 void y4m2_close_video(Y4m2 *y4m2)
 {
     fclose(y4m2->file);
+    printf("INFO: Generated %s       \n", y4m2->file_name);
     free(y4m2->file_name);
     free(y4m2);
 }

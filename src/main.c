@@ -1,47 +1,170 @@
-#include "./canvas.h"
-#include "./yuv.h"
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#include "canvas.h"
+#include "yuv.h"
+#include "gl.h"
 
 #define WIDTH_PX 256
 #define HEIGHT_PX 256
 #define RADIUS_PX (WIDTH_PX / 3)
-
 #define BG_COLOR 0x282C34
 #define FG_COLOR 0xF92672
+#define VIDEO_DURATION 10
+#define VIDEO_FPS 30
 #define AA_X 4
 
-#define VIDEO_DURATION 10
-#define FPS 30
+#define ARRAY_SIZE(X) (sizeof(X) / sizeof(X[0]))
 
-int main(void)
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    (void) scancode;
+    (void) action;
+    (void) mods;
+    switch(key) {
+        case GLFW_KEY_Q:
+            glfwSetWindowShouldClose(window, true);
+            break;
+    }
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    (void) window;
+    glViewport(0, 0, width, height);
+}
+
+int main(int argc, char **argv)
 {
     Canvas *canvas = canvas_create(WIDTH_PX, HEIGHT_PX);
-
     canvas_clear(canvas, BG_COLOR);
-    canvas_draw_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, RADIUS_PX, FG_COLOR);
-    canvas_save_to_ppm(canvas, "circle.ppm");
 
-    canvas_clear(canvas, BG_COLOR);
-    canvas_draw_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, RADIUS_PX, FG_COLOR);
-    canvas_save_to_ppm(canvas, "filled_circle.ppm");
+    if (argc < 2 || strncmp("opengl", argv[1], 6)) {
+        canvas_draw_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, RADIUS_PX, FG_COLOR);
+        canvas_save_to_ppm(canvas, "circle.ppm");
 
-    canvas_clear(canvas, BG_COLOR);
-    canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, RADIUS_PX, FG_COLOR, BG_COLOR, AA_X);
-    canvas_save_to_ppm(canvas, "anti_aliased_filled_circle.ppm");
-
-    Y4m2 *y4m2 = y4m2_open_video("circle.y4m", WIDTH_PX, HEIGHT_PX, FPS);
-
-    size_t frame_count = FPS * VIDEO_DURATION;
-    for(size_t i = 0; i < frame_count; i++) {
         canvas_clear(canvas, BG_COLOR);
-        canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f,
-                                               fabs(cos(i/24.0f)) * RADIUS_PX, FG_COLOR, BG_COLOR, AA_X);
-        y4m2_dump_canvas_frame(y4m2, canvas, 1);
-        printf("Generating %s: %.0f%%\r", y4m2->file_name, i * 100.0f / frame_count);
-        fflush(stdout);
+        canvas_draw_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, RADIUS_PX, FG_COLOR);
+        canvas_save_to_ppm(canvas, "filled_circle.ppm");
+
+        canvas_clear(canvas, BG_COLOR);
+        canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, RADIUS_PX, FG_COLOR, BG_COLOR, AA_X);
+        canvas_save_to_ppm(canvas, "anti_aliased_filled_circle.ppm");
+
+        Y4m2 *y4m2 = y4m2_open_video("circle.y4m", WIDTH_PX, HEIGHT_PX, VIDEO_FPS);
+
+        size_t frame_count = VIDEO_FPS * VIDEO_DURATION;
+        for(size_t i = 0; i < frame_count; i++) {
+            canvas_clear(canvas, BG_COLOR);
+            canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f,
+                    fabs(cos(i/24.0f)) * RADIUS_PX, FG_COLOR, BG_COLOR, AA_X);
+            y4m2_dump_canvas_frame(y4m2, canvas, 1);
+            printf("INFO: Generating %s: %.0f%%\r", y4m2->file_name, i * 100.0f / frame_count);
+            fflush(stdout);
+        }
+
+        y4m2_close_video(y4m2);
+    } else {
+        if (!glfwInit()) {
+            fprintf(stderr, "ERROR: Could not initialize GLFW");
+            exit(1);
+        }
+        printf("INFO: Initialized GLFW\n");
+
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        GLFWwindow *window = glfwCreateWindow(WIDTH_PX, HEIGHT_PX, "C Circles", NULL, NULL);
+        if(window == NULL) {
+            const char* description;
+            glfwGetError(&description);
+            fprintf(stderr, "ERROR: Could not create a GLFW Window: %s\n", description);
+            exit(1);
+        }
+        printf("INFO: Created GLFW window\n");
+
+        glfwSetKeyCallback(window, key_callback);
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+        glfwMakeContextCurrent(window);
+        if (glewInit() != GLEW_OK) {
+            fprintf(stderr, "ERROR: Could not initialize GLEW");
+            exit(1);
+        }
+        printf("INFO: Initialized GLEW\n");
+
+        GLuint vertex_array;
+        glGenVertexArrays(1, &vertex_array);
+        glBindVertexArray(vertex_array);
+
+        GLuint canvas_texture;
+        glGenTextures(1, &canvas_texture);
+        glBindTexture(GL_TEXTURE_2D, canvas_texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH_PX, HEIGHT_PX,
+                     0, GL_RGB, GL_UNSIGNED_BYTE, canvas->ctx);
+
+        GLuint vert_shader = glCreateShader(GL_VERTEX_SHADER);
+        printf("INFO: Created vertex shader %u\n", vert_shader);
+        GLuint frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
+        printf("INFO: Created frag shader %u\n", frag_shader);
+
+        GLchar *vert_shader_src =
+            "#version 330 core                                        \n\
+            out vec2 uv;                                              \n\
+            void main(){                                              \n\
+                uv = vec2(gl_VertexID & 1, gl_VertexID >> 1);         \n\
+                    gl_Position = vec4(2 * uv - 1, 0.0, 1.0);         \n\
+            }";
+        compile_shader(vert_shader, vert_shader_src);
+
+        GLchar *frag_shader_src =
+            "#version 330 core                                        \n\
+            uniform sampler2D frame;                                  \n\
+            in vec2 uv;                                               \n\
+            out vec4 color;                                           \n\
+            void main(){                                              \n\
+                color = texture(frame, uv);                           \n\
+            }";
+        compile_shader(frag_shader, frag_shader_src);
+
+        GLuint program = glCreateProgram();
+        printf("INFO: Created program %u\n", program);
+
+        GLuint shaders[] = {vert_shader, frag_shader};
+        link_shaders(program, shaders, ARRAY_SIZE(shaders));
+        glUseProgram(program);
+
+        GLint time_uniform_location = glGetUniformLocation(program, "time");
+
+        while(!glfwWindowShouldClose(window)) {
+            float glfw_time = (float) glfwGetTime();
+
+            glUniform1f(time_uniform_location, glfw_time);
+
+            glClearColor(0.0f,0.0f, 0.0f, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+            canvas_clear(canvas, BG_COLOR);
+            canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, 
+                                                   fabs(cos(glfw_time))* RADIUS_PX, 
+                                                   FG_COLOR, BG_COLOR, AA_X);
+
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH_PX, HEIGHT_PX,
+                            GL_RGB, GL_UNSIGNED_BYTE, canvas->ctx);
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+
+        glfwDestroyWindow(window);
+        glfwTerminate();
     }
-    printf("Generated %s       \n", y4m2->file_name);
-    y4m2_close_video(y4m2);
 
     canvas_free(canvas);
     return 0;
