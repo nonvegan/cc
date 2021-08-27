@@ -119,7 +119,7 @@ int main(int argc, char **argv)
             out vec2 uv;                                              \n\
             void main(){                                              \n\
                 uv = vec2(gl_VertexID & 1, gl_VertexID >> 1);         \n\
-                    gl_Position = vec4(2 * uv - 1, 0.0, 1.0);         \n\
+                     gl_Position = vec4(2 * uv - 1, 0.0, 1.0);        \n\
             }";
         compile_shader(vert_shader, vert_shader_src);
 
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
             in vec2 uv;                                               \n\
             out vec4 color;                                           \n\
             void main(){                                              \n\
-                color = texture(frame, uv);                           \n\
+                color = texture(frame, vec2(uv.x, -uv.y));            \n\
             }";
         compile_shader(frag_shader, frag_shader_src);
 
