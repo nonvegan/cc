@@ -8,8 +8,8 @@
 #include "yuv.h"
 #include "gl.h"
 
-#define WIDTH_PX 256
-#define HEIGHT_PX 256
+#define WIDTH_PX 1000
+#define HEIGHT_PX 1000
 #define RADIUS_PX (WIDTH_PX / 3)
 #define BG_COLOR 0x282C34
 #define FG_COLOR 0xF92672
@@ -118,9 +118,6 @@ int main(int argc, char **argv)
 
         GLuint vert_shader = glCreateShader(GL_VERTEX_SHADER);
         printf("INFO: Created vertex shader %u\n", vert_shader);
-        GLuint frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-        printf("INFO: Created fragment shader %u\n", frag_shader);
-
         GLchar *vert_shader_src =
             "#version 330 core                                        \n\
             out vec2 uv;                                              \n\
@@ -135,6 +132,8 @@ int main(int argc, char **argv)
         }
         printf("INFO: Compiled vertex shader %u\n", vert_shader);
 
+        GLuint frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
+        printf("INFO: Created fragment shader %u\n", frag_shader);
         GLchar *frag_shader_src =
             "#version 330 core                                        \n\
             uniform sampler2D frame;                                  \n\
@@ -170,7 +169,7 @@ int main(int argc, char **argv)
 
             glUniform1f(time_uniform_location, glfw_time);
 
-            glClearColor(0.0f,0.0f, 0.0f, 1);
+            glClearColor(0.0f, 0.0f, 0.0f, 1);
             glClear(GL_COLOR_BUFFER_BIT);
             canvas_clear(canvas, BG_COLOR);
             canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, 
