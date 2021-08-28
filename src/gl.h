@@ -7,8 +7,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-void compile_shader(GLuint shader, const GLchar *shader_src);
+GLint compile_shader(GLuint shader, const GLchar *shader_src);
 
-void link_shaders(GLuint program, GLuint *shaders, size_t n);
+GLint link_shaders(GLuint program, GLuint *shaders, size_t n);
 
 #endif // GL_H_

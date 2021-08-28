@@ -55,6 +55,10 @@ int main(int argc, char **argv)
         canvas_save_to_ppm(canvas, "anti_aliased_filled_circle.ppm");
 
         Y4m2 *y4m2 = y4m2_open_video("circle.y4m", WIDTH_PX, HEIGHT_PX, VIDEO_FPS);
+        if(y4m2 == NULL) {
+            canvas_free(canvas);
+            exit(1);
+        }
 
         size_t frame_count = VIDEO_FPS * VIDEO_DURATION;
         for(size_t i = 0; i < frame_count; i++) {
@@ -70,6 +74,7 @@ int main(int argc, char **argv)
     } else {
         if (!glfwInit()) {
             fprintf(stderr, "ERROR: Could not initialize GLFW");
+            canvas_free(canvas);
             exit(1);
         }
         printf("INFO: Initialized GLFW\n");
@@ -83,6 +88,7 @@ int main(int argc, char **argv)
             const char* description;
             glfwGetError(&description);
             fprintf(stderr, "ERROR: Could not create a GLFW Window: %s\n", description);
+            canvas_free(canvas);
             exit(1);
         }
         printf("INFO: Created GLFW window\n");
@@ -93,6 +99,7 @@ int main(int argc, char **argv)
         glfwMakeContextCurrent(window);
         if (glewInit() != GLEW_OK) {
             fprintf(stderr, "ERROR: Could not initialize GLEW");
+            canvas_free(canvas);
             exit(1);
         }
         printf("INFO: Initialized GLEW\n");
@@ -112,7 +119,7 @@ int main(int argc, char **argv)
         GLuint vert_shader = glCreateShader(GL_VERTEX_SHADER);
         printf("INFO: Created vertex shader %u\n", vert_shader);
         GLuint frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-        printf("INFO: Created frag shader %u\n", frag_shader);
+        printf("INFO: Created fragment shader %u\n", frag_shader);
 
         GLchar *vert_shader_src =
             "#version 330 core                                        \n\
@@ -121,7 +128,12 @@ int main(int argc, char **argv)
                 uv = vec2(gl_VertexID & 1, gl_VertexID >> 1);         \n\
                      gl_Position = vec4(2 * uv - 1, 0.0, 1.0);        \n\
             }";
-        compile_shader(vert_shader, vert_shader_src);
+        if(compile_shader(vert_shader, vert_shader_src) != GL_TRUE) {
+            fprintf(stderr, "ERROR: Could not compile vertex shader %u\n", vert_shader);
+            canvas_free(canvas);
+            exit(1);
+        }
+        printf("INFO: Compiled vertex shader %u\n", vert_shader);
 
         GLchar *frag_shader_src =
             "#version 330 core                                        \n\
@@ -131,13 +143,24 @@ int main(int argc, char **argv)
             void main(){                                              \n\
                 color = texture(frame, vec2(uv.x, -uv.y));            \n\
             }";
-        compile_shader(frag_shader, frag_shader_src);
+        if(compile_shader(frag_shader, frag_shader_src) != GL_TRUE) {
+            fprintf(stderr, "ERROR: Could not compile fragment shader %u\n", frag_shader);
+            canvas_free(canvas);
+            exit(1);
+        }
+        printf("INFO: Compiled fragment shader %u\n", frag_shader);
 
         GLuint program = glCreateProgram();
         printf("INFO: Created program %u\n", program);
 
         GLuint shaders[] = {vert_shader, frag_shader};
-        link_shaders(program, shaders, ARRAY_SIZE(shaders));
+        if(link_shaders(program, shaders, ARRAY_SIZE(shaders)) != GL_TRUE) {
+            fprintf(stderr, "ERROR: Could not link program %u\n", program);
+            canvas_free(canvas);
+            exit(1);
+        }
+        printf("INFO: Linked program %u\n", program);
+
         glUseProgram(program);
 
         GLint time_uniform_location = glGetUniformLocation(program, "time");

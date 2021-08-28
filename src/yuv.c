@@ -19,7 +19,7 @@ Y4m2 *y4m2_open_video(char *file_name, size_t width, size_t height, size_t fps)
     FILE *f = fopen(file_name, "w");
     if(f == NULL) {
         fprintf(stderr, "ERROR: Could not open file %s: %s\n", file_name, strerror(errno));
-        exit(1);
+        return NULL;
     }
 
     fprintf(f, "YUV4MPEG2 W%lu H%lu F%lu:1 Ip A1:1 C444\n", width, height, fps);
