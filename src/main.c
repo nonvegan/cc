@@ -8,8 +8,8 @@
 #include "yuv.h"
 #include "gl.h"
 
-#define WIDTH_PX 1000
-#define HEIGHT_PX 1000
+#define WIDTH_PX 256
+#define HEIGHT_PX 256
 #define RADIUS_PX (WIDTH_PX / 3)
 #define BG_COLOR 0x282C34
 #define FG_COLOR 0xF92672
@@ -172,8 +172,8 @@ int main(int argc, char **argv)
             glClearColor(0.0f, 0.0f, 0.0f, 1);
             glClear(GL_COLOR_BUFFER_BIT);
             canvas_clear(canvas, BG_COLOR);
-            canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, 
-                                                   fabs(cos(glfw_time))* RADIUS_PX, 
+            canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f,
+                                                   fabs(cos(glfw_time))* RADIUS_PX,
                                                    FG_COLOR, BG_COLOR, AA_X);
 
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
