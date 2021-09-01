@@ -10,6 +10,7 @@ Inspired by [tsoding/midpoint-circle-visualization](https://github.com/tsoding/m
 ## Quick Start
 
 ```console
+$ sudo apt install libglfw3-dev libglew-dev
 $ make
 $ ./main
 $ feh *.ppm --keep-zoom-vp --force-aliasing
