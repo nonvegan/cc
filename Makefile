@@ -1,6 +1,6 @@
 CC=gcc
 NAME=main
-SRC=src/main.c src/canvas.c src/yuv.c src/gl.c
+SRC=src/main.c src/canvas.c src/yuv.c src/gl.c src/x11.c
 CFLAGS=-std=c11 -Wall -Wextra -pedantic
 LIBS=-lm
 PKGS=glfw3 gl glew x11
