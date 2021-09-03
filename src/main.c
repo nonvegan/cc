@@ -39,9 +39,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 int main(int argc, char **argv)
 {
-    Canvas *test = screenshot_as_canvas();
-    canvas_save_to_ppm(test, "screenshot.ppm");
-    exit(0);
     Canvas *canvas = canvas_create(WIDTH_PX, HEIGHT_PX);
     canvas_clear(canvas, BG_COLOR);
 
@@ -72,8 +69,11 @@ int main(int argc, char **argv)
             printf("INFO: Generating %s: %.0f%%\r", y4m2->file_name, i * 100.0f / frame_count);
             fflush(stdout);
         }
-
         y4m2_close_video(y4m2);
+
+        Canvas *ss_canvas = screenshot_as_canvas();
+        canvas_save_to_ppm(ss_canvas, "screenshot.ppm");
+        canvas_free(ss_canvas);
     } else {
         if (!glfwInit()) {
             fprintf(stderr, "ERROR: Could not initialize GLFW");
