@@ -146,10 +146,11 @@ Canvas *screenshot_as_canvas()
     printf("INFO: Got X Image %dx%d/%d\n", image->width, image->height, image->bits_per_pixel);
 
     Canvas *canvas = canvas_create(image->width, image->height);
+
+    //TODO: Eliminating nested loop and use of XGetPixel would be nice
     for(size_t x = 0; x < image->width; x++)
-        for(size_t y = 0; y < image->height; y++) {
+        for(size_t y = 0; y < image->height; y++)
             canvas_fill_px(canvas, x, y, XGetPixel(image, x, y));
-        }
 
     XDestroyImage(image);
     XCloseDisplay(display);
