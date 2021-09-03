@@ -69,11 +69,8 @@ int main(int argc, char **argv)
             printf("INFO: Generating %s: %.0f%%\r", y4m2->file_name, i * 100.0f / frame_count);
             fflush(stdout);
         }
-        y4m2_close_video(y4m2);
 
-        Canvas *ss_canvas = screenshot_as_canvas();
-        canvas_save_to_ppm(ss_canvas, "screenshot.ppm");
-        canvas_free(ss_canvas);
+        y4m2_close_video(y4m2);
     } else {
         if (!glfwInit()) {
             fprintf(stderr, "ERROR: Could not initialize GLFW");
