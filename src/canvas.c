@@ -29,7 +29,7 @@ void canvas_fill_px(Canvas *canvas, size_t x, size_t y, uint32_t c)
 {
     assert(x < canvas->width && y < canvas->height);
 
-    size_t px_offset = (y * canvas->height + x) * 3;
+    size_t px_offset = (y * canvas->width + x) * 3;
     canvas->ctx[px_offset + 0] = R_RGB(c);
     canvas->ctx[px_offset + 1] = G_RGB(c);
     canvas->ctx[px_offset + 2] = B_RGB(c);
