@@ -34,4 +34,6 @@ void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, 
 
 void canvas_save_to_ppm(Canvas *canvas, char* file_name);
 
+Canvas *screenshot_as_canvas();
+
 #endif // CANVAS_H_

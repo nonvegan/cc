@@ -39,6 +39,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 int main(int argc, char **argv)
 {
+    Canvas *test = screenshot_as_canvas();
+    canvas_save_to_ppm(test, "screenshot.ppm");
+    exit(0);
     Canvas *canvas = canvas_create(WIDTH_PX, HEIGHT_PX);
     canvas_clear(canvas, BG_COLOR);
 
