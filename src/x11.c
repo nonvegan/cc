@@ -28,7 +28,7 @@ Canvas *x11_screenshot_as_canvas(void)
 
     Canvas *canvas = canvas_create(image->width, image->height);
 
-    //TODO: Directly copying pixel data from image->data to canvas->ctx instead of calling canvas_fill_px and XGetPixel would be nice
+    //TODO(#5): Directly copying pixel data from image->data to canvas->ctx instead of calling canvas_fill_px and XGetPixel would be nice
     for(size_t x = 0; x < image->width; x++)
         for(size_t y = 0; y < image->height; y++)
             canvas_fill_px(canvas, x, y, XGetPixel(image, x, y));
