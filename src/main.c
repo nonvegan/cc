@@ -38,7 +38,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     (void) mods;
 
     // TODO(#3): Introduce mouse dragging 
-    // TODO: Keep track of key states and only update camera_pos inside the main loop 
+    // TODO(#4): Keep track of key states and only update camera_pos inside the main loop 
     switch(key) {
         case GLFW_KEY_Q:
             glfwSetWindowShouldClose(window, true);
