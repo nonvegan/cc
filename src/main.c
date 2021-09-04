@@ -17,18 +17,53 @@
 #define VIDEO_FPS 30
 #define AA_X 4
 
+#define MIN_ZOOM 0.2
+#define MAX_ZOOM 2
+#define ZOOM_SPEED 0.1
+#define MOVE_SPEED_PX 10
+
 #define ARRAY_SIZE(X) (sizeof(X) / sizeof(X[0]))
+
+typedef struct {
+    float x, y;
+} Vec2f;
+
+Vec2f camera_pos = {0}; 
+float camera_scale = 1;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     (void) scancode;
     (void) action;
     (void) mods;
+
+    // TODO(#3): Introduce mouse dragging 
+    // TODO: Keep track of key states and only update camera_pos inside the main loop 
     switch(key) {
         case GLFW_KEY_Q:
             glfwSetWindowShouldClose(window, true);
             break;
+        case GLFW_KEY_R:
+            camera_scale = 1.0f;
+            break;
+        case GLFW_KEY_UP:
+            camera_pos.y -= MOVE_SPEED_PX;
+            break;
+        case GLFW_KEY_RIGHT:
+            camera_pos.x += MOVE_SPEED_PX;
+            break;
+        case GLFW_KEY_DOWN:
+            camera_pos.y += MOVE_SPEED_PX;
+            break;
+        case GLFW_KEY_LEFT:
+            camera_pos.x -= MOVE_SPEED_PX;
+            break;
     }
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    camera_scale = fmin(MAX_ZOOM, fmax(MIN_ZOOM , camera_scale + yoffset * ZOOM_SPEED));
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -94,6 +129,7 @@ int main(int argc, char **argv)
         printf("INFO: Created GLFW window\n");
 
         glfwSetKeyCallback(window, key_callback);
+        glfwSetScrollCallback(window, scroll_callback);
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
         glfwMakeContextCurrent(window);
@@ -120,10 +156,13 @@ int main(int argc, char **argv)
         printf("INFO: Created vertex shader %u\n", vert_shader);
         GLchar *vert_shader_src =
             "#version 330 core                                        \n\
+            uniform vec2 camera_pos;                                  \n\
+            uniform vec2 resolution;                                  \n\
+            uniform float camera_scale;                               \n\
             out vec2 uv;                                              \n\
             void main(){                                              \n\
                 uv = vec2(gl_VertexID & 1, gl_VertexID >> 1);         \n\
-                     gl_Position = vec4(2 * uv - 1, 0.0, 1.0);        \n\
+                gl_Position = vec4(2 * uv - 1 + vec2(-camera_pos.x, camera_pos.y) / resolution, 0.0, 1 / camera_scale);\n\
             }";
         if(compile_shader(vert_shader, vert_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile vertex shader %u\n", vert_shader);
@@ -140,7 +179,7 @@ int main(int argc, char **argv)
             in vec2 uv;                                               \n\
             out vec4 color;                                           \n\
             void main(){                                              \n\
-                color = texture(frame, vec2(uv.x, -uv.y));            \n\
+                color = texture(frame, vec2(uv.x, 1-uv.y));           \n\
             }";
         if(compile_shader(frag_shader, frag_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile fragment shader %u\n", frag_shader);
@@ -163,13 +202,20 @@ int main(int argc, char **argv)
         glUseProgram(program);
 
         GLint time_uniform_location = glGetUniformLocation(program, "time");
+        GLint camera_pos_uniform_location = glGetUniformLocation(program, "camera_pos");
+        GLint camera_scale_uniform_location = glGetUniformLocation(program, "camera_scale");
+        GLint resolution_uniform_location = glGetUniformLocation(program, "resolution");
 
         while(!glfwWindowShouldClose(window)) {
             float glfw_time = (float) glfwGetTime();
+            int w, h;
+            glfwGetFramebufferSize(window, &w, &h);
 
             glUniform1f(time_uniform_location, glfw_time);
-
-            glClearColor(0.0f, 0.0f, 0.0f, 1);
+            glUniform1f(camera_scale_uniform_location, camera_scale);
+            glUniform2f(camera_pos_uniform_location, camera_pos.x, camera_pos.y);
+            glUniform2f(resolution_uniform_location, w, h);
+            
             glClear(GL_COLOR_BUFFER_BIT);
             canvas_clear(canvas, BG_COLOR);
             canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f,
@@ -179,7 +225,6 @@ int main(int argc, char **argv)
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH_PX, HEIGHT_PX,
                             GL_RGB, GL_UNSIGNED_BYTE, canvas->ctx);
-
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
