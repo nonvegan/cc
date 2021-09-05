@@ -7,9 +7,10 @@
 #include "canvas.h"
 #include "yuv.h"
 #include "gl.h"
+#include "vec.h"
 
-#define WIDTH_PX 256
-#define HEIGHT_PX 256
+#define WIDTH_PX 512
+#define HEIGHT_PX 512
 #define RADIUS_PX (WIDTH_PX / 3)
 #define BG_COLOR 0x282C34
 #define FG_COLOR 0xF92672
@@ -23,28 +24,23 @@
 
 #define ARRAY_SIZE(X) (sizeof(X) / sizeof(X[0]))
 
-typedef struct {
-    float x, y;
-} Vec2f;
-
-Vec2f camera_pos = {0}; 
-Vec2f anchor_pos = {0};
-float camera_scale = 1;
+float camera_scale;
+Vec2f camera_pos;
+Vec2f anchor_pos;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     (void) scancode;
     (void) action;
     (void) mods;
-
     switch(key) {
         case GLFW_KEY_Q:
             glfwSetWindowShouldClose(window, true);
             break;
         case GLFW_KEY_R:
-            camera_pos.x = 0;
-            camera_pos.y = 0;
+            glfwSetWindowSize(window, WIDTH_PX, HEIGHT_PX);
             camera_scale = 1.0f;
+            camera_pos = vec2ff(0.0f);
             break;
     }
 }
@@ -52,31 +48,38 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        // TODO(#6): Implement a proper linear algebra TL
-        float dx = xpos - anchor_pos.x;
-        float dy = ypos - anchor_pos.y;
-        camera_pos.x -= dx;
-        camera_pos.y -= dy;
-        anchor_pos.x = xpos;
-        anchor_pos.y = ypos;
+        Vec2f mouse_pos = vec2f((float) xpos, (float) ypos);
+        camera_pos = vec2f_sub(camera_pos, vec2f_sub(mouse_pos, anchor_pos));
+        anchor_pos = mouse_pos;
     }
+}
+
+Vec2f glfw_cursor_pos(GLFWwindow *window) 
+{
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        return vec2f((float) xpos, (float) ypos);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     (void) mods;
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-        anchor_pos.x = xpos;
-        anchor_pos.y = ypos;
+        anchor_pos = glfw_cursor_pos(window);
     }
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     (void) window;
-    camera_scale = fmin(MAX_ZOOM, fmax(MIN_ZOOM , camera_scale + yoffset * ZOOM_SPEED));
+    camera_scale = fmax(MIN_ZOOM, fmin(MAX_ZOOM, camera_scale + yoffset * ZOOM_SPEED));
+}
+
+Vec2i glfw_window_size(GLFWwindow *window)
+{
+    int w, h;
+    glfwGetFramebufferSize(window, &w, &h);
+    return vec2i(w, h);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -217,6 +220,10 @@ int main(int argc, char **argv)
 
         glUseProgram(program);
 
+        camera_scale = 1.0f;
+        camera_pos = vec2ff(0.0f);
+        anchor_pos = vec2ff(0.0f);
+
         GLint time_uniform_location = glGetUniformLocation(program, "time");
         GLint camera_pos_uniform_location = glGetUniformLocation(program, "camera_pos");
         GLint camera_scale_uniform_location = glGetUniformLocation(program, "camera_scale");
@@ -224,13 +231,12 @@ int main(int argc, char **argv)
 
         while(!glfwWindowShouldClose(window)) {
             float glfw_time = (float) glfwGetTime();
-            int w, h;
-            glfwGetFramebufferSize(window, &w, &h);
+            Vec2i window_size = glfw_window_size(window);
 
             glUniform1f(time_uniform_location, glfw_time);
             glUniform1f(camera_scale_uniform_location, camera_scale);
             glUniform2f(camera_pos_uniform_location, camera_pos.x, camera_pos.y);
-            glUniform2f(resolution_uniform_location, w, h);
+            glUniform2f(resolution_uniform_location, window_size.x, window_size.y);
             
             glClear(GL_COLOR_BUFFER_BIT);
             canvas_clear(canvas, BG_COLOR);
