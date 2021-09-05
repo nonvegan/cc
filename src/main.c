@@ -120,8 +120,8 @@ int main(int argc, char **argv)
             printf("INFO: Generating %s: %.0f%%\r", y4m2->file_name, i * 100.0f / frame_count);
             fflush(stdout);
         }
-
         y4m2_close_video(y4m2);
+
     } else {
         if (!glfwInit()) {
             fprintf(stderr, "ERROR: Could not initialize GLFW");
@@ -167,7 +167,7 @@ int main(int argc, char **argv)
         glBindTexture(GL_TEXTURE_2D, canvas_texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH_PX, HEIGHT_PX,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, canvas->width, canvas->height,
                      0, GL_RGB, GL_UNSIGNED_BYTE, canvas->ctx);
 
         GLuint vert_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -183,6 +183,7 @@ int main(int argc, char **argv)
                 vec2 camera = vec2(1, -1) * camera_pos / camera_scale / resolution; \n\
                 gl_Position = vec4(2 * (uv + camera) - 1, 0.0, 1 / camera_scale);   \n\
             }";
+
         if(compile_shader(vert_shader, vert_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile vertex shader %u\n", vert_shader);
             canvas_free(canvas);
@@ -200,6 +201,7 @@ int main(int argc, char **argv)
             void main(){                                                            \n\
                 color = texture(frame, vec2(uv.x, 1-uv.y));                         \n\
             }";
+
         if(compile_shader(frag_shader, frag_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile fragment shader %u\n", frag_shader);
             canvas_free(canvas);
@@ -240,13 +242,14 @@ int main(int argc, char **argv)
             
             glClear(GL_COLOR_BUFFER_BIT);
             canvas_clear(canvas, BG_COLOR);
-            canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f,
+            canvas_draw_anti_aliased_filled_circle(canvas, canvas->width * 0.5f, canvas->height * 0.5f,
                                                    fabs(cos(glfw_time))* RADIUS_PX,
                                                    FG_COLOR, BG_COLOR, AA_X);
 
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH_PX, HEIGHT_PX,
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, canvas->width, canvas->height,
                             GL_RGB, GL_UNSIGNED_BYTE, canvas->ctx);
+
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
