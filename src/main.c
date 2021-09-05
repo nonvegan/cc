@@ -29,6 +29,7 @@ typedef struct {
 } Vec2f;
 
 Vec2f camera_pos = {0}; 
+Vec2f anchor_pos = {0};
 float camera_scale = 1;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -37,13 +38,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     (void) action;
     (void) mods;
 
-    // TODO(#3): Introduce mouse dragging 
     // TODO(#4): Keep track of key states and only update camera_pos inside the main loop 
     switch(key) {
         case GLFW_KEY_Q:
             glfwSetWindowShouldClose(window, true);
             break;
         case GLFW_KEY_R:
+            camera_pos.x = 0;
+            camera_pos.y = 0;
             camera_scale = 1.0f;
             break;
         case GLFW_KEY_UP:
@@ -61,8 +63,32 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        float dx = xpos - anchor_pos.x;
+        float dy = ypos - anchor_pos.y;
+        camera_pos.x -= 2 * dx / camera_scale;
+        camera_pos.y -= 2 * dy / camera_scale;
+        anchor_pos.x = xpos;
+        anchor_pos.y = ypos;
+    }
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    (void) mods;
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        anchor_pos.x = xpos;
+        anchor_pos.y = ypos;
+    }
+}
+
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    (void) window;
     camera_scale = fmin(MAX_ZOOM, fmax(MIN_ZOOM , camera_scale + yoffset * ZOOM_SPEED));
 }
 
@@ -129,6 +155,8 @@ int main(int argc, char **argv)
         printf("INFO: Created GLFW window\n");
 
         glfwSetKeyCallback(window, key_callback);
+        glfwSetCursorPosCallback(window, cursor_position_callback);
+        glfwSetMouseButtonCallback(window, mouse_button_callback);
         glfwSetScrollCallback(window, scroll_callback);
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
