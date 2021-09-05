@@ -52,6 +52,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        // TODO(#6): Implement a proper linear algebra TL
         float dx = xpos - anchor_pos.x;
         float dy = ypos - anchor_pos.y;
         camera_pos.x -= 2 * dx / camera_scale;
