@@ -49,7 +49,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         Vec2f mouse_pos = vec2f((float) xpos, (float) ypos);
-        camera_pos = vec2f_sub(camera_pos, vec2f_sub(mouse_pos, anchor_pos));
+        camera_pos = vec2f_add(camera_pos, vec2f_sub(mouse_pos, anchor_pos));
         anchor_pos = mouse_pos;
     }
 }
@@ -181,7 +181,7 @@ int main(int argc, char **argv)
             void main(){                                                            \n\
                 uv = vec2(gl_VertexID & 1, gl_VertexID >> 1);                       \n\
                 vec2 camera = vec2(1, -1) * camera_pos / camera_scale / resolution; \n\
-                gl_Position = vec4(2 * (uv - camera) - 1, 0.0, 1 / camera_scale);   \n\
+                gl_Position = vec4(2 * (uv + camera) - 1, 0.0, 1 / camera_scale);   \n\
             }";
         if(compile_shader(vert_shader, vert_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile vertex shader %u\n", vert_shader);
