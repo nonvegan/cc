@@ -55,8 +55,8 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
         // TODO(#6): Implement a proper linear algebra TL
         float dx = xpos - anchor_pos.x;
         float dy = ypos - anchor_pos.y;
-        camera_pos.x -= 2 * dx / camera_scale;
-        camera_pos.y -= 2 * dy / camera_scale;
+        camera_pos.x -= dx;
+        camera_pos.y -= dy;
         anchor_pos.x = xpos;
         anchor_pos.y = ypos;
     }
@@ -170,14 +170,15 @@ int main(int argc, char **argv)
         GLuint vert_shader = glCreateShader(GL_VERTEX_SHADER);
         printf("INFO: Created vertex shader %u\n", vert_shader);
         GLchar *vert_shader_src =
-            "#version 330 core                                        \n\
-            uniform vec2 camera_pos;                                  \n\
-            uniform vec2 resolution;                                  \n\
-            uniform float camera_scale;                               \n\
-            out vec2 uv;                                              \n\
-            void main(){                                              \n\
-                uv = vec2(gl_VertexID & 1, gl_VertexID >> 1);         \n\
-                gl_Position = vec4(2 * uv - 1 + vec2(-camera_pos.x, camera_pos.y) / resolution, 0.0, 1 / camera_scale);\n\
+            "#version 330 core                                                      \n\
+            uniform vec2 camera_pos;                                                \n\
+            uniform vec2 resolution;                                                \n\
+            uniform float camera_scale;                                             \n\
+            out vec2 uv;                                                            \n\
+            void main(){                                                            \n\
+                uv = vec2(gl_VertexID & 1, gl_VertexID >> 1);                       \n\
+                vec2 camera = vec2(1, -1) * camera_pos / camera_scale / resolution; \n\
+                gl_Position = vec4(2 * (uv - camera) - 1, 0.0, 1 / camera_scale);   \n\
             }";
         if(compile_shader(vert_shader, vert_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile vertex shader %u\n", vert_shader);
@@ -189,12 +190,12 @@ int main(int argc, char **argv)
         GLuint frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
         printf("INFO: Created fragment shader %u\n", frag_shader);
         GLchar *frag_shader_src =
-            "#version 330 core                                        \n\
-            uniform sampler2D frame;                                  \n\
-            in vec2 uv;                                               \n\
-            out vec4 color;                                           \n\
-            void main(){                                              \n\
-                color = texture(frame, vec2(uv.x, 1-uv.y));           \n\
+            "#version 330 core                                                      \n\
+            uniform sampler2D frame;                                                \n\
+            in vec2 uv;                                                             \n\
+            out vec4 color;                                                         \n\
+            void main(){                                                            \n\
+                color = texture(frame, vec2(uv.x, 1-uv.y));                         \n\
             }";
         if(compile_shader(frag_shader, frag_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile fragment shader %u\n", frag_shader);
