@@ -20,7 +20,6 @@
 #define MIN_ZOOM 0.2
 #define MAX_ZOOM 2
 #define ZOOM_SPEED 0.1
-#define MOVE_SPEED_PX 10
 
 #define ARRAY_SIZE(X) (sizeof(X) / sizeof(X[0]))
 
@@ -38,7 +37,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     (void) action;
     (void) mods;
 
-    // TODO(#4): Keep track of key states and only update camera_pos inside the main loop 
     switch(key) {
         case GLFW_KEY_Q:
             glfwSetWindowShouldClose(window, true);
@@ -47,18 +45,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             camera_pos.x = 0;
             camera_pos.y = 0;
             camera_scale = 1.0f;
-            break;
-        case GLFW_KEY_UP:
-            camera_pos.y -= MOVE_SPEED_PX;
-            break;
-        case GLFW_KEY_RIGHT:
-            camera_pos.x += MOVE_SPEED_PX;
-            break;
-        case GLFW_KEY_DOWN:
-            camera_pos.y += MOVE_SPEED_PX;
-            break;
-        case GLFW_KEY_LEFT:
-            camera_pos.x -= MOVE_SPEED_PX;
             break;
     }
 }
