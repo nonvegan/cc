@@ -8,6 +8,7 @@
 #include "yuv.h"
 #include "gl.h"
 #include "vec.h"
+#include "glfw_extra.h"
 
 #define WIDTH_PX 512
 #define HEIGHT_PX 512
@@ -54,18 +55,11 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
     }
 }
 
-Vec2f glfw_cursor_pos(GLFWwindow *window) 
-{
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-        return vec2f((float) xpos, (float) ypos);
-}
-
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     (void) mods;
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        anchor_pos = glfw_cursor_pos(window);
+        anchor_pos = glfw_mouse_pos(window);
     }
 }
 
@@ -73,13 +67,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     (void) window;
     camera_scale = fmax(MIN_ZOOM, fmin(MAX_ZOOM, camera_scale + yoffset * ZOOM_SPEED));
-}
-
-Vec2i glfw_window_size(GLFWwindow *window)
-{
-    int w, h;
-    glfwGetFramebufferSize(window, &w, &h);
-    return vec2i(w, h);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -233,17 +220,17 @@ int main(int argc, char **argv)
 
         while(!glfwWindowShouldClose(window)) {
             float glfw_time = (float) glfwGetTime();
-            Vec2i window_size = glfw_window_size(window);
+            Vec2f window_size = glfw_window_size(window);
 
             glUniform1f(time_uniform_location, glfw_time);
             glUniform1f(camera_scale_uniform_location, camera_scale);
             glUniform2f(camera_pos_uniform_location, camera_pos.x, camera_pos.y);
             glUniform2f(resolution_uniform_location, window_size.x, window_size.y);
-            
+
             glClear(GL_COLOR_BUFFER_BIT);
             canvas_clear(canvas, BG_COLOR);
             canvas_draw_anti_aliased_filled_circle(canvas, canvas->width * 0.5f, canvas->height * 0.5f,
-                                                   fabs(cos(glfw_time))* RADIUS_PX,
+                                                   fabs(cos(glfw_time)) * RADIUS_PX,
                                                    FG_COLOR, BG_COLOR, AA_X);
 
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
