@@ -6,6 +6,7 @@
 #include "vec.h"
 
 Vec2f glfw_window_size(GLFWwindow *window);
+
 Vec2f glfw_mouse_pos(GLFWwindow *window);
 
 #endif // GLFW_EXTRA_H
