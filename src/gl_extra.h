@@ -1,5 +1,5 @@
-#ifndef GL_H_
-#define GL_H_
+#ifndef GL_EXTRA_H_
+#define GL_EXTRA_H_
 
 #include <stdlib.h>
 
@@ -11,4 +11,4 @@ GLint compile_shader(GLuint shader, const GLchar *shader_src);
 
 GLint link_shaders(GLuint program, GLuint *shaders, size_t n);
 
-#endif // GL_H_
+#endif // GL_EXTRA_H_

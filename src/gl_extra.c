@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "gl.h"
+#include "gl_extra.h"
 
 GLint compile_shader(GLuint shader, const GLchar *shader_src)
 {
