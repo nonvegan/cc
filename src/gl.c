@@ -55,5 +55,3 @@ void gl_update_canvas_texture(Canvas *canvas)
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, canvas->width, canvas->height,
                     GL_RGB, GL_UNSIGNED_BYTE, canvas->ctx);
 }
-
-

@@ -233,4 +233,3 @@ int main(int argc, char **argv)
     canvas_free(canvas);
     return 0;
 }
-
