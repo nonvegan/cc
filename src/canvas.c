@@ -9,6 +9,7 @@
 Canvas *canvas_create(size_t w, size_t h)
 {
     Canvas *canvas = malloc(sizeof(Canvas));
+    if(canvas == NULL) exit(1);
 
     canvas->width = w;
     canvas->height = h;
