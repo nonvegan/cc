@@ -7,7 +7,7 @@
 #include "canvas.h"
 #include "yuv.h"
 #include "gl.h"
-#include "glfw_extra.h"
+#include "glfw.h"
 #include "vec.h"
 
 #define WIDTH_PX 512

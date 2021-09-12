@@ -1,4 +1,4 @@
-#include "glfw_extra.h"
+#include "glfw.h"
 
 Vec2f glfw_window_size(GLFWwindow *window)
 {
