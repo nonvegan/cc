@@ -6,7 +6,7 @@
 
 #include "canvas.h"
 #include "yuv.h"
-#include "gl_extra.h"
+#include "gl.h"
 #include "glfw_extra.h"
 #include "vec.h"
 
@@ -78,9 +78,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 int main(int argc, char **argv)
 {
     Canvas *canvas = canvas_create(WIDTH_PX, HEIGHT_PX);
-    canvas_clear(canvas, BG_COLOR);
 
     if (argc < 2 || strncmp("opengl", argv[1], 6)) {
+        canvas_clear(canvas, BG_COLOR);
         canvas_draw_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, RADIUS_PX, FG_COLOR);
         canvas_save_to_ppm(canvas, "circle.ppm");
 
@@ -89,14 +89,12 @@ int main(int argc, char **argv)
         canvas_save_to_ppm(canvas, "filled_circle.ppm");
 
         canvas_clear(canvas, BG_COLOR);
-        canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f, RADIUS_PX, FG_COLOR, BG_COLOR, AA_X);
+        canvas_draw_anti_aliased_filled_circle(canvas, WIDTH_PX * 0.5f, HEIGHT_PX * 0.5f,
+                                               RADIUS_PX, FG_COLOR, BG_COLOR, AA_X);
         canvas_save_to_ppm(canvas, "anti_aliased_filled_circle.ppm");
 
         Y4m2 *y4m2 = y4m2_open_video("circle.y4m", WIDTH_PX, HEIGHT_PX, VIDEO_FPS);
-        if(y4m2 == NULL) {
-            canvas_free(canvas);
-            exit(1);
-        }
+        if(y4m2 == NULL) canvas_exit(canvas, 1);
 
         size_t frame_count = VIDEO_FPS * VIDEO_DURATION;
         for(size_t i = 0; i < frame_count; i++) {
@@ -112,8 +110,7 @@ int main(int argc, char **argv)
     } else {
         if (!glfwInit()) {
             fprintf(stderr, "ERROR: Could not initialize GLFW");
-            canvas_free(canvas);
-            exit(1);
+            canvas_exit(canvas, 1);
         }
         printf("INFO: Initialized GLFW\n");
 
@@ -126,8 +123,7 @@ int main(int argc, char **argv)
             const char* description;
             glfwGetError(&description);
             fprintf(stderr, "ERROR: Could not create a GLFW Window: %s\n", description);
-            canvas_free(canvas);
-            exit(1);
+            canvas_exit(canvas, 1);
         }
         printf("INFO: Created GLFW window\n");
 
@@ -140,22 +136,14 @@ int main(int argc, char **argv)
         glfwMakeContextCurrent(window);
         if (glewInit() != GLEW_OK) {
             fprintf(stderr, "ERROR: Could not initialize GLEW");
-            canvas_free(canvas);
-            exit(1);
+            canvas_exit(canvas, 1);
         }
         printf("INFO: Initialized GLEW\n");
 
-        GLuint vertex_array;
-        glGenVertexArrays(1, &vertex_array);
-        glBindVertexArray(vertex_array);
+        GLuint vertex_array = gl_gen_vertex_array(1);
 
-        GLuint canvas_texture;
-        glGenTextures(1, &canvas_texture);
-        glBindTexture(GL_TEXTURE_2D, canvas_texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, canvas->width, canvas->height,
-                     0, GL_RGB, GL_UNSIGNED_BYTE, canvas->ctx);
+        canvas_clear(canvas, BG_COLOR);
+        GLuint canvas_texture = gl_gen_canvas_texture(canvas);
 
         GLuint vert_shader = glCreateShader(GL_VERTEX_SHADER);
         printf("INFO: Created vertex shader %u\n", vert_shader);
@@ -173,8 +161,7 @@ int main(int argc, char **argv)
 
         if(compile_shader(vert_shader, vert_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile vertex shader %u\n", vert_shader);
-            canvas_free(canvas);
-            exit(1);
+            canvas_exit(canvas, 1);
         }
         printf("INFO: Compiled vertex shader %u\n", vert_shader);
 
@@ -191,8 +178,7 @@ int main(int argc, char **argv)
 
         if(compile_shader(frag_shader, frag_shader_src) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not compile fragment shader %u\n", frag_shader);
-            canvas_free(canvas);
-            exit(1);
+            canvas_exit(canvas, 1);
         }
         printf("INFO: Compiled fragment shader %u\n", frag_shader);
 
@@ -202,8 +188,7 @@ int main(int argc, char **argv)
         GLuint shaders[] = {vert_shader, frag_shader};
         if(link_shaders(program, shaders, ARRAY_SIZE(shaders)) != GL_TRUE) {
             fprintf(stderr, "ERROR: Could not link program %u\n", program);
-            canvas_free(canvas);
-            exit(1);
+            canvas_exit(canvas, 1);
         }
         printf("INFO: Linked program %u\n", program);
 
@@ -229,13 +214,13 @@ int main(int argc, char **argv)
 
             glClear(GL_COLOR_BUFFER_BIT);
             canvas_clear(canvas, BG_COLOR);
+
             canvas_draw_anti_aliased_filled_circle(canvas, canvas->width * 0.5f, canvas->height * 0.5f,
                                                    fabs(cos(glfw_time)) * RADIUS_PX,
                                                    FG_COLOR, BG_COLOR, AA_X);
 
+            gl_update_canvas_texture(canvas);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, canvas->width, canvas->height,
-                            GL_RGB, GL_UNSIGNED_BYTE, canvas->ctx);
 
             glfwSwapBuffers(window);
             glfwPollEvents();
@@ -248,3 +233,4 @@ int main(int argc, char **argv)
     canvas_free(canvas);
     return 0;
 }
+

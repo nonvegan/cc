@@ -1,9 +1,9 @@
+#include "x11.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-
-#include "x11.h"
 
 Canvas *x11_screenshot_as_canvas(void)
 {

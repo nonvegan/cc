@@ -1,15 +1,16 @@
+#include "yuv.h"
+
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
 
-#include "yuv.h"
 #include "canvas.h"
 
 #define YCBCR(Y,CB,CR) RGB(Y,CB,CR)
 
-#define Y_YCBCR(Y)   R_RGB(Y)  
-#define CB_YCBCR(CB) G_RGB(CB) 
+#define Y_YCBCR(Y)   R_RGB(Y)
+#define CB_YCBCR(CB) G_RGB(CB)
 #define CR_YCBCR(CR) B_RGB(CR)
 
 Y4m2 *y4m2_open_video(char *file_name, size_t width, size_t height, size_t fps)
@@ -51,7 +52,7 @@ void y4m2_dump_canvas_frame(Y4m2 *y4m2, Canvas *canvas, size_t frame_count)
     uint8_t ycbcr_frame[px_count * 3];
 
     for(size_t i = 0; i < px_count; i++) {
-        uint32_t ycbcr = rgb_to_ycbcr(canvas->ctx[i * 3 + 0], 
+        uint32_t ycbcr = rgb_to_ycbcr(canvas->ctx[i * 3 + 0],
                                       canvas->ctx[i * 3 + 1],
                                       canvas->ctx[i * 3 + 2]);
 

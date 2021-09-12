@@ -2,6 +2,7 @@
 #define YUV_H_
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "canvas.h"
 

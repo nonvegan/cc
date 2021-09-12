@@ -1,10 +1,10 @@
+#include "canvas.h"
+
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
 #include <math.h>
-
-#include "canvas.h"
 
 Canvas *canvas_create(size_t w, size_t h)
 {
@@ -21,6 +21,12 @@ void canvas_free(Canvas *canvas)
 {
     free(canvas->ctx);
     free(canvas);
+}
+
+void canvas_exit(Canvas *canvas, int status)
+{
+    canvas_free(canvas);
+    exit(status);
 }
 
 void canvas_fill_px(Canvas *canvas, size_t x, size_t y, uint32_t c)
