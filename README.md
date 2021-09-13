@@ -15,6 +15,7 @@ $ make
 $ ./main
 $ feh *.ppm --keep-zoom-vp --force-aliasing
 $ mpv circle.y4m
+% mpv putinWalk.y4m
 $ ./main opengl
 ```
 ## Output (Converted to PNG & GIF)
