@@ -1,5 +1,5 @@
 
-# C Circles
+# C Graphical Context
 
 Inspired by [tsoding/midpoint-circle-visualization](https://github.com/tsoding/midpoint-circle-visualization) & [tsoding/2mpeg4yuv](https://github.com/tsoding/2mpeg4yuv)
 
