@@ -16,11 +16,14 @@
 #define RADIUS_PX (WIDTH_PX / 3)
 #define BG_COLOR 0x282C34
 #define FG_COLOR 0xF92672
+
+#define RENDER_AA_VIDEO 0
 #define VIDEO_DURATION 10
 #define VIDEO_FPS 30
 #define AA_X 4
 
-#define GIF_VIDEO_DURATION 10
+#define GIF_VIDEO_DURATION 5
+#define GIF_VIDEO_FPS GIF_KEEP_FPS
 
 #define GL_MIN_ZOOM 0.2
 #define GL_MAX_ZOOM 2
@@ -96,6 +99,7 @@ int main(int argc, char **argv)
                                                RADIUS_PX, FG_COLOR, BG_COLOR, AA_X);
         canvas_save_to_ppm(canvas, "anti_aliased_filled_circle.ppm");
 
+#if RENDER_AA_VIDEO
         Y4m2 *y4m2 = y4m2_open_video("circle.y4m", WIDTH_PX, HEIGHT_PX, VIDEO_FPS);
         if(y4m2 == NULL) canvas_exit(canvas, 1);
 
@@ -109,8 +113,9 @@ int main(int argc, char **argv)
             fflush(stdout);
         }
         y4m2_close_video(y4m2);
+#endif // RENDER_AA_VIDEO
 
-        gif_render_y4m2_video("assets/putinWalk.gif", "putinWalk.y4m", GIF_VIDEO_DURATION, GIF_KEEP_FPS);
+        gif_render_y4m2_video("assets/putinWalk.gif", "putinWalk.y4m", GIF_VIDEO_DURATION, GIF_VIDEO_FPS);
 
     } else {
 

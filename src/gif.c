@@ -1,12 +1,27 @@
 #include "gif.h"
 
 #include <assert.h>
-#include <gif_lib.h>
 #include <string.h>
 #include <errno.h>
 
-#include "canvas.h"
 #include "y4m2.h"
+
+int gif_dump_frame_to_canvas(GifFileType *gif_file, size_t index, Canvas *canvas)
+{
+    assert(index < gif_file->ImageCount);
+    SavedImage *image = &gif_file->SavedImages[index];
+    ColorMapObject *local_color_map = image->ImageDesc.ColorMap;
+
+    ColorMapObject *color_map = local_color_map ? local_color_map : gif_file->SColorMap;
+    assert(color_map && "Missing color map");
+    assert(color_map->BitsPerPixel == 8 && "Unsupported GIF format");
+
+    for(size_t x = 0; x < gif_file->SWidth; x++)
+        for(size_t y = 0; y < gif_file->SHeight; y++) {
+            GifColorType px = color_map->Colors[image->RasterBits[y * gif_file->SWidth + x]];
+            canvas_fill_px(canvas, x, y, RGB(px.Red, px.Green, px.Blue));
+        }
+}
 
 int gif_render_y4m2_video(const char *input_file_name,
                           const char *output_file_name,
@@ -31,8 +46,6 @@ int gif_render_y4m2_video(const char *input_file_name,
             gif_file->ImageCount,
             gif_file->SColorMap->BitsPerPixel,
             input_file_name);
-
-    ColorMapObject *global_color_map = gif_file->SColorMap;
 
     // NOTE: A whole lot of assumptions to derive gif fps
     GraphicsControlBlock gcb = {0};
@@ -63,18 +76,7 @@ int gif_render_y4m2_video(const char *input_file_name,
 
     while(frame_count < target_frame_count) {
         for(size_t i = 0; i < gif_file->ImageCount; i++) {
-            SavedImage image = gif_file->SavedImages[i];
-            ColorMapObject *local_color_map = image.ImageDesc.ColorMap;
-            ColorMapObject *color_map = local_color_map ? local_color_map : global_color_map;
-            assert(color_map && "Missing color map");
-            assert(color_map->BitsPerPixel == 8 && "Unsupported GIF format");
-
-            for(size_t x = 0; x < canvas->width; x++)
-                for(size_t y = 0; y < canvas->height; y++) {
-                    GifColorType px = color_map->Colors[image.RasterBits[y * gif_file->SWidth + x]];
-                    canvas_fill_px(canvas, x, y, RGB(px.Red, px.Green, px.Blue));
-                }
-
+            gif_dump_frame_to_canvas(gif_file, i, canvas);
             y4m2_dump_canvas_frame(y4m2_handle, canvas, 1);
             if(++frame_count >= target_frame_count) break;
         }
