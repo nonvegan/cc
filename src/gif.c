@@ -13,7 +13,6 @@ int gif_render_y4m2_video(const char *input_file_name,
                           float video_duration_sec,
                           size_t gif_fps)
 {
-
     int error = 0;
     GifFileType *gif_file = DGifOpenFileName(input_file_name, &error);
     if(error || gif_file == NULL) {
@@ -47,11 +46,8 @@ int gif_render_y4m2_video(const char *input_file_name,
         gif_fps = 100.0f / gcb.DelayTime;
     }
 
-    
-    if(video_duration_sec == GIF_KEEP_DURATION) {
+    if(video_duration_sec == GIF_KEEP_DURATION)
         video_duration_sec = (float) gif_file->ImageCount / gif_fps;
-    }
-
 
     Y4m2 *y4m2_handle = y4m2_open_video(output_file_name, gif_file->SWidth, gif_file->SHeight, gif_fps);
     if(y4m2_handle == NULL) {
@@ -80,7 +76,6 @@ int gif_render_y4m2_video(const char *input_file_name,
                 }
 
             y4m2_dump_canvas_frame(y4m2_handle, canvas, 1);
-
             if(++frame_count >= target_frame_count) break;
         }
     }

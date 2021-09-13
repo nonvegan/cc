@@ -9,7 +9,7 @@
 typedef struct {
     char *file_name;
     FILE *file;
-    size_t width; 
+    size_t width;
     size_t height;
     size_t fps;
 } Y4m2;
