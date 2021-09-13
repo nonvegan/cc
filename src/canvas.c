@@ -30,6 +30,23 @@ void canvas_exit(Canvas *canvas, int status)
     exit(status);
 }
 
+void canvas_change_size(Canvas *canvas, size_t w, size_t h)
+{
+    uint8_t *buffer = calloc(w * h * 3, 1);
+
+    size_t min_width = fmin(w, canvas->width);
+    size_t min_height = fmin(h, canvas->height);
+
+    for(size_t row = 0; row < min_height; row++) {
+        memcpy(buffer + 3 * row * w, canvas->ctx + 3 * row * canvas->width, 3 * min_width);
+    }
+
+    canvas->width = w;
+    canvas->height = h;
+    free(canvas->ctx);
+    canvas->ctx = buffer;
+}
+
 void canvas_fill_px(Canvas *canvas, size_t x, size_t y, uint32_t c)
 {
     assert(x < canvas->width && y < canvas->height);
@@ -88,8 +105,8 @@ float lerp(float x, float y, float p)
 uint32_t color_blend(uint32_t bg, uint32_t fg, float ratio)
 {
     return RGB((uint8_t) sqrt(lerp(pow(R_RGB(bg), 2), pow(R_RGB(fg), 2), ratio)),
-               (uint8_t) sqrt(lerp(pow(G_RGB(bg), 2), pow(G_RGB(fg), 2), ratio)),
-               (uint8_t) sqrt(lerp(pow(B_RGB(bg), 2), pow(B_RGB(fg), 2), ratio)));
+            (uint8_t) sqrt(lerp(pow(G_RGB(bg), 2), pow(G_RGB(fg), 2), ratio)),
+            (uint8_t) sqrt(lerp(pow(B_RGB(bg), 2), pow(B_RGB(fg), 2), ratio)));
 }
 
 void canvas_draw_anti_aliased_filled_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg, uint32_t bg, size_t aa_x)

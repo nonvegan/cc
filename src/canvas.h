@@ -24,6 +24,8 @@ void canvas_free(Canvas *canvas);
 
 void canvas_exit(Canvas *canvas, int status);
 
+void canvas_change_size(Canvas *canvas, size_t w, size_t h);
+
 void canvas_fill_px(Canvas *canvas, size_t x, size_t y, uint32_t c);
 
 void canvas_clear(Canvas *canvas, uint32_t c);

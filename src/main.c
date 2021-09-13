@@ -5,10 +5,11 @@
 #include <string.h>
 
 #include "canvas.h"
-#include "yuv.h"
+#include "y4m2.h"
 #include "gl.h"
 #include "glfw.h"
 #include "vec.h"
+#include "gif.h"
 
 #define WIDTH_PX 512
 #define HEIGHT_PX 512
@@ -19,9 +20,11 @@
 #define VIDEO_FPS 30
 #define AA_X 4
 
-#define MIN_ZOOM 0.2
-#define MAX_ZOOM 2
-#define ZOOM_SPEED 0.1
+#define GIF_VIDEO_DURATION 10
+
+#define GL_MIN_ZOOM 0.2
+#define GL_MAX_ZOOM 2
+#define GL_ZOOM_SPEED 0.1
 
 #define ARRAY_SIZE(X) (sizeof(X) / sizeof(X[0]))
 
@@ -66,7 +69,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     (void) window;
-    camera_scale = fmax(MIN_ZOOM, fmin(MAX_ZOOM, camera_scale + yoffset * ZOOM_SPEED));
+    camera_scale = fmax(GL_MIN_ZOOM, fmin(GL_MAX_ZOOM, camera_scale + yoffset * GL_ZOOM_SPEED));
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -107,7 +110,10 @@ int main(int argc, char **argv)
         }
         y4m2_close_video(y4m2);
 
+        gif_render_y4m2_video("assets/putinWalk.gif", "putinWalk.y4m", GIF_VIDEO_DURATION, GIF_KEEP_FPS);
+
     } else {
+
         if (!glfwInit()) {
             fprintf(stderr, "ERROR: Could not initialize GLFW");
             canvas_exit(canvas, 1);
@@ -216,8 +222,8 @@ int main(int argc, char **argv)
             canvas_clear(canvas, BG_COLOR);
 
             canvas_draw_anti_aliased_filled_circle(canvas, canvas->width * 0.5f, canvas->height * 0.5f,
-                                                   fabs(cos(glfw_time)) * RADIUS_PX,
-                                                   FG_COLOR, BG_COLOR, AA_X);
+                    fabs(cos(glfw_time)) * RADIUS_PX,
+                    FG_COLOR, BG_COLOR, AA_X);
 
             gl_update_canvas_texture(canvas);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
