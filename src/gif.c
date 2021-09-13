@@ -16,8 +16,8 @@ int gif_dump_frame_to_canvas(GifFileType *gif_file, size_t index, Canvas *canvas
     assert(color_map && "Missing color map");
     assert(color_map->BitsPerPixel == 8 && "Unsupported GIF format");
 
-    for(size_t x = 0; x < gif_file->SWidth; x++)
-        for(size_t y = 0; y < gif_file->SHeight; y++) {
+    for(size_t x = 0; x < gif_file->SWidth && x < canvas->width; x++)
+        for(size_t y = 0; y < gif_file->SHeight && y < canvas->height; y++) {
             GifColorType px = color_map->Colors[image->RasterBits[y * gif_file->SWidth + x]];
             canvas_fill_px(canvas, x, y, RGB(px.Red, px.Green, px.Blue));
         }
