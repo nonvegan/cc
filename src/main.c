@@ -22,6 +22,8 @@
 #define VIDEO_FPS 30
 #define AA_X 4
 
+#define GIF_VIDEO_SRC_NAME "assets/putinWalk.gif"
+#define GIF_VIDEO_DST_NAME "putinWalk.y4m"
 #define GIF_VIDEO_DURATION 5
 #define GIF_VIDEO_FPS GIF_KEEP_FPS
 
@@ -115,7 +117,7 @@ int main(int argc, char **argv)
         y4m2_close_video(y4m2);
 #endif // RENDER_AA_VIDEO
 
-        gif_render_y4m2_video("assets/putinWalk.gif", "putinWalk.y4m", GIF_VIDEO_DURATION, GIF_VIDEO_FPS);
+        gif_render_y4m2_video(GIF_VIDEO_SRC_NAME, GIF_VIDEO_DST_NAME, GIF_VIDEO_DURATION, GIF_VIDEO_FPS);
 
     } else {
 
