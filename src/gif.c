@@ -40,12 +40,12 @@ int gif_render_y4m2_video(const char *input_file_name,
         return GIF_ERROR;
     }
 
-    printf("INFO: Loaded GIF %dx%d, images-> %d, bpp -> %d from %s\n",
+    printf("INFO: Loaded %s GIF file, %dx%d, %d images, %d bpp\n",
+            input_file_name,
             gif_file->SWidth,
             gif_file->SHeight,
             gif_file->ImageCount,
-            gif_file->SColorMap->BitsPerPixel,
-            input_file_name);
+            gif_file->SColorMap->BitsPerPixel);
 
     // NOTE: A whole lot of assumptions to derive gif fps
     GraphicsControlBlock gcb = {0};
