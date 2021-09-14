@@ -1,4 +1,4 @@
-#ifndef GIF_H_ 
+#ifndef GIF_H_
 #define GIF_H_
 
 #include <stdlib.h>
@@ -6,7 +6,7 @@
 
 #include "canvas.h"
 
-#define GIF_KEEP_DURATION 0 
+#define GIF_KEEP_DURATION 0
 #define GIF_KEEP_FPS 0
 
 int gif_dump_frame_to_canvas(GifFileType *gif_file, size_t index, Canvas *canvas);

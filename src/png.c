@@ -1,4 +1,5 @@
 #include "png.h"
+
 #include "canvas.h"
 
 #include <stdio.h>
@@ -9,7 +10,7 @@
 
 void png_load_image_to_canvas(const char *src_file_name, Canvas *canvas, int pos_x, int pos_y)
 {
-    png_image image ={.version = PNG_IMAGE_VERSION};
+    png_image image = {.version = PNG_IMAGE_VERSION};
     png_image_begin_read_from_file(&image, "assets/KEKW.png");
 
     printf("INFO: Loaded %s PNG file, %dx%d with %d format\n",
@@ -38,4 +39,6 @@ void png_load_image_to_canvas(const char *src_file_name, Canvas *canvas, int pos
             }
         }
     }
+    png_image_free(&image);
+
 }

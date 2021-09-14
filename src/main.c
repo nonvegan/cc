@@ -11,6 +11,7 @@
 #include "vec.h"
 #include "gif.h"
 #include "png.h"
+#include "jpeg.h"
 
 #define WIDTH_PX 512
 #define HEIGHT_PX 512
@@ -86,7 +87,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 int main(int argc, char **argv)
 {
-
     Canvas *canvas = canvas_create(WIDTH_PX, HEIGHT_PX);
 
     if (argc < 2 || strncmp("opengl", argv[1], 6)) {
@@ -121,9 +121,11 @@ int main(int argc, char **argv)
 
         gif_render_y4m2_video(GIF_VIDEO_SRC_NAME, GIF_VIDEO_DST_NAME, GIF_VIDEO_DURATION, GIF_VIDEO_FPS);
 
-        /* png_load_image_to_canvas("assets/KEKW.png", canvas, 0, 0); */
-        /* canvas_save_to_ppm(canvas, "test.ppm"); */
- 
+        canvas_clear(canvas, BG_COLOR);
+        png_load_image_to_canvas("assets/KEKW.png", canvas, 100, 100);
+        jpeg_save_canvas_to_file(canvas, "KEKW.jpeg", 25);
+        canvas_save_to_ppm(canvas, "KEKW.ppm");
+
     } else {
 
         if (!glfwInit()) {
