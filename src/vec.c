@@ -1,5 +1,7 @@
 #include "vec.h"
 
+#include <math.h>
+
 Vec2i vec2i(int x, int y)
 {
     return (Vec2i) {x, y};
@@ -34,6 +36,16 @@ Vec2i vec2i_div(Vec2i a, Vec2i b)
 {
     return vec2i(a.x / b.x, a.y / b.y);
 }
+
+float vec2i_len(Vec2i a)
+{
+    return sqrt(a.x * a.x + a.y * a.y);
+}
+
+float vec2i_dst(Vec2i a, Vec2i b)
+{
+    return vec2i_len(vec2i_sub(b, a));
+} 
 
 Vec2f vec2f(float x, float y)
 {
