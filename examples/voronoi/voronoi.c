@@ -6,7 +6,7 @@
 #include "../../src/vec.h"
 #include "../../src/jpeg.h"
 
-#define WIDTH_PX 520
+#define WIDTH_PX 640
 #define HEIGHT_PX 480
 #define NUMBER_OF_POINTS 20
 
