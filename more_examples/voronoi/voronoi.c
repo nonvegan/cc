@@ -16,7 +16,6 @@ typedef struct {
     uint32_t color;
 } Point;
 
-
 void main()
 {
     srand(time(NULL));
@@ -43,7 +42,7 @@ void main()
         canvas_draw_filled_circle(canvas, points[i].pos.x, points[i].pos.y, 2, RGB(0,0,0));
     }
 #endif
+    
     jpeg_save_canvas_to_file(canvas, "voronoi.jpeg", 100);
-
     canvas_free(canvas);
 }
