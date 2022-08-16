@@ -48,7 +48,7 @@ float vec2i_dst(Vec2i a, Vec2i b)
     return vec2i_len(vec2i_sub(b, a));
 }
 
-int vec2i_dst_eucl(Vec2i a, Vec2i b)
+int vec2i_dst_manh(Vec2i a, Vec2i b)
 {
     return abs(a.x - b.x) + abs(a.y - b.y);
 }

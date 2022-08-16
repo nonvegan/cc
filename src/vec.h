@@ -18,7 +18,7 @@ Vec2i vec2i_mul(Vec2i a, Vec2i b);
 Vec2i vec2i_div(Vec2i a, Vec2i b);
 float vec2i_len(Vec2i a);
 float vec2i_dst(Vec2i a, Vec2i b);
-int vec2i_dst_eucl(Vec2i a, Vec2i b);
+int vec2i_dst_manh(Vec2i a, Vec2i b);
 
 Vec2f vec2f(float x, float y);
 Vec2f vec2ff(float x);
