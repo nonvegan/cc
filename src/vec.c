@@ -1,6 +1,7 @@
 #include "vec.h"
 
 #include <math.h>
+#include <stdlib.h>
 
 Vec2i vec2i(int x, int y)
 {
@@ -45,7 +46,12 @@ float vec2i_len(Vec2i a)
 float vec2i_dst(Vec2i a, Vec2i b)
 {
     return vec2i_len(vec2i_sub(b, a));
-} 
+}
+
+int vec2i_dst_eucl(Vec2i a, Vec2i b)
+{
+    return abs(a.x - b.x) + abs(a.y - b.y);
+}
 
 Vec2f vec2f(float x, float y)
 {
