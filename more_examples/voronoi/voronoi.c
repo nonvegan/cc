@@ -6,9 +6,10 @@
 #include "../../src/vec.h"
 #include "../../src/jpeg.h"
 
-#define WIDTH_PX 640
+#define WIDTH_PX 620
 #define HEIGHT_PX 480
-#define NUMBER_OF_POINTS 20
+#define NUMBER_OF_POINTS 30
+#define DRAW_POINTS 0
 
 typedef struct {
     Vec2i pos;
@@ -25,22 +26,24 @@ void main()
 
     for(size_t i = 0; i < NUMBER_OF_POINTS; i++) {
         points[i].pos = vec2i(rand() % WIDTH_PX, rand() % HEIGHT_PX);
-        points[i].color = RGB(rand() % 255, rand() % 255, rand() % 255);
+        points[i].color = RGB((int)((float)points[i].pos.y / (float)HEIGHT_PX * 255), rand() % 255, (int)((float)points[i].pos.x / (float)WIDTH_PX * 255));
     }
 
     for(size_t x = 0; x < WIDTH_PX; x++)
         for(size_t y = 0; y < HEIGHT_PX; y++) {
             Point *closest_point = points;
             for(size_t i = 1; i < NUMBER_OF_POINTS; i++)
-                if(vec2i_dst(vec2i(x,y), closest_point->pos) > vec2i_dst(vec2i(x,y), points[i].pos))
+                if(vec2i_dst_manh(vec2i(x,y), closest_point->pos) > vec2i_dst_manh(vec2i(x,y), points[i].pos))
                     closest_point = points + i;
             canvas_fill_px(canvas, x, y, closest_point->color);
         }
 
+#if DRAW_POINTS
     for(size_t i = 0; i < NUMBER_OF_POINTS; i++) {
         canvas_draw_filled_circle(canvas, points[i].pos.x, points[i].pos.y, 2, RGB(0,0,0));
     }
-
+#endif
     jpeg_save_canvas_to_file(canvas, "voronoi.jpeg", 100);
+
     canvas_free(canvas);
 }
