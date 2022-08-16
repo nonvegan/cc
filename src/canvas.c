@@ -57,6 +57,16 @@ void canvas_fill_px(Canvas *canvas, size_t x, size_t y, uint32_t c)
     canvas->ctx[px_offset + 2] = B_RGB(c);
 }
 
+uint32_t canvas_get_px(Canvas *canvas, size_t x, size_t y)
+{
+    assert(x < canvas->width && y < canvas->height);
+
+    size_t px_offset = (y * canvas->width + x) * 3;
+    return RGB(canvas->ctx[px_offset + 0],
+               canvas->ctx[px_offset + 1],
+               canvas->ctx[px_offset + 2]);
+}
+
 void canvas_clear(Canvas *canvas, uint32_t c)
 {
     for(size_t x = 0; x < canvas->width; x++)

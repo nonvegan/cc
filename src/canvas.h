@@ -28,6 +28,8 @@ void canvas_change_size(Canvas *canvas, size_t w, size_t h);
 
 void canvas_fill_px(Canvas *canvas, size_t x, size_t y, uint32_t c);
 
+uint32_t canvas_get_px(Canvas *canvas, size_t x, size_t y);
+
 void canvas_clear(Canvas *canvas, uint32_t c);
 
 void canvas_draw_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg);
