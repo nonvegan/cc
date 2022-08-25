@@ -1,13 +1,5 @@
-# Voronoi Diagram
-
-[Voronoi Diagram Wikipedia](https://en.wikipedia.org/wiki/Voronoi_diagram)
+# SDL2
 
 ```console
-$ make
-$ ./main
-$ feh voronoi.jpeg --force-aliasing
+$ make run
 ```
-
-## Output 
-
-![Voronoi Diagram](img/voronoi.jpeg)
