@@ -9,9 +9,19 @@
 
 #define WIDTH_PX 620
 #define HEIGHT_PX 480
+#define FPS 30
+
+
+uint32_t rand_gray_shade()
+{
+    int rand_255 = rand() % 256;
+    return RGB(rand_255, rand_255, rand_255);
+}
 
 int main()
 {
+    srand(time(0));
+
     if(SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "ERROR: Failed to initialize SDL: %s\n", SDL_GetError());
         return 1;
@@ -39,16 +49,6 @@ int main()
     }
 
     Canvas *canvas = canvas_create(WIDTH_PX, HEIGHT_PX);
-    canvas_clear(canvas, 0xFF0000);
-
-    if (SDL_UpdateTexture(texture, NULL, canvas->ctx, 3 * canvas->width)) {
-        SDL_DestroyWindow(window);
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyTexture(texture);
-        canvas_free(canvas);
-        fprintf(stderr, "ERROR: Failed to update SDL Texture: %s\n", SDL_GetError());
-        return EXIT_FAILURE;
-    }
 
     int quit = 0;
     while(!quit) {
@@ -67,9 +67,21 @@ int main()
                     break;
             }
         }
+
+        canvas_map(canvas, rand_gray_shade);
+        if (SDL_UpdateTexture(texture, NULL, canvas->ctx, 3 * canvas->width)) {
+            SDL_DestroyWindow(window);
+            SDL_DestroyRenderer(renderer);
+            SDL_DestroyTexture(texture);
+            canvas_free(canvas);
+            fprintf(stderr, "ERROR: Failed to update SDL Texture: %s\n", SDL_GetError());
+            return EXIT_FAILURE;
+        }
+
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
+        SDL_Delay((int)(1.0f / FPS * 1000));
     }
 
     SDL_DestroyWindow(window);

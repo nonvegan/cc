@@ -74,6 +74,12 @@ void canvas_clear(Canvas *canvas, uint32_t c)
             canvas_fill_px(canvas, x, y, c);
 }
 
+void canvas_map(Canvas *canvas, uint32_t (fill_color_callback) (size_t _x, size_t _y)) {
+    for(size_t x = 0; x < canvas->width; x++)
+        for(size_t y = 0; y < canvas->height; y++)
+            canvas_fill_px(canvas, x, y, fill_color_callback(x, y));
+}
+
 void canvas_draw_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg)
 {
     float x = 0.5f;
