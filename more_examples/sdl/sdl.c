@@ -82,6 +82,7 @@ int main()
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
         SDL_Delay((int)(1.0f / FPS * 1000));
+        //TODO(#9): Proper frametime without blocking
     }
 
     SDL_DestroyWindow(window);
