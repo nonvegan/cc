@@ -32,7 +32,7 @@ uint32_t canvas_get_px(Canvas *canvas, size_t x, size_t y);
 
 void canvas_clear(Canvas *canvas, uint32_t c);
 
-void canvas_map(Canvas *canvas, uint32_t (fill_color_callback) (size_t _x, size_t _y));
+void canvas_map(Canvas *canvas, uint32_t (*fill_color_callback) (size_t _x, size_t _y));
 
 void canvas_draw_circle(Canvas *canvas, float cx, float cy, float r, uint32_t fg);
 

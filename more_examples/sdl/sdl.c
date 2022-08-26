@@ -11,7 +11,6 @@
 #define HEIGHT_PX 480
 #define FPS 30
 
-
 uint32_t rand_gray_shade()
 {
     int rand_255 = rand() % 256;
