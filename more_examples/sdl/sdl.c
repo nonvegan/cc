@@ -4,8 +4,6 @@
 #include <SDL2/SDL.h>
 
 #include "../../src/canvas.h"
-#include "../../src/vec.h"
-#include "../../src/jpeg.h"
 
 #define WIDTH_PX 620
 #define HEIGHT_PX 480
