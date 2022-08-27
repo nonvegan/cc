@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <libpng/png.h>
+#include <png.h>
 #include <string.h>
 #include <stdint.h>
 
